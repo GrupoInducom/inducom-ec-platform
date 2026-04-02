@@ -9,7 +9,7 @@ export default async function VacanciesPage() {
   const vacancies = await getVacancies.execute();
 
   return (
-    <MainShell>
+    <MainShell role="candidato">
       <VacanciesListView vacancies={vacancies} />
     </MainShell>
   );
