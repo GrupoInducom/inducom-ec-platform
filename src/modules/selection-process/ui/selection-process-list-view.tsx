@@ -130,11 +130,12 @@ export function SelectionProcessListView() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <nav className="mb-2 flex items-center gap-2 text-sm text-[#2E6E77]">
-            <span>Dashboard</span>
+            <Link href="/home" className="hover:underline">
+              Dashboard
+            </Link>
             <span className="text-slate-400">&gt;</span>
+            
             <span>Proceso de Selección</span>
-            <span className="text-slate-400">&gt;</span>
-            <span>Gestión</span>
           </nav>
 
           <h1 className="text-[2.2rem] font-extrabold tracking-[-0.03em] text-slate-950">
@@ -185,6 +186,9 @@ export function SelectionProcessListView() {
         </div>
       </div>
 
+    {/* ! En una pantalla grande, mostramos la tabla y el panel de filtros lado a lado. En pantallas más pequeñas.
+      el panel de filtros se muestra debajo de la tabla */}
+      
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm">
           <div className="overflow-x-auto">
@@ -249,7 +253,7 @@ export function SelectionProcessListView() {
                         </Link>
 
                         <Link
-                          href={`/procesos/${process.id}`}
+                          href={`/procesos/${process.id}/editar`}
                           className="text-slate-700 transition hover:text-[#0697A7]"
                           title="Editar proceso"
                         >
