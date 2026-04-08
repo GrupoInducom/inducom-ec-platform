@@ -1,3 +1,5 @@
+import { ProcessCandidatesView } from "@/src/modules/candidates/ui/process-candidates-view";
+
 export default function ProcesoCandidatosPage() {
-  return <div>Candidatos por Proceso</div>;
+  return <ProcessCandidatesView />;
 }

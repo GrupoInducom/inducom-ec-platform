@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/src/modules/landing/context/LanguageContext";
 
 export function HeroSection() {
+  const { t } = useLanguage();
+  
   const scrollToVacantes = () => {
     const element = document.getElementById('vacantes');
     if (element) {
@@ -27,7 +30,7 @@ export function HeroSection() {
             className="inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium shadow-sm hover:shadow-md transition-shadow cursor-default"
           >
             <span className="flex h-2 w-2 rounded-full bg-inducom-orange mr-2 animate-pulse"></span>
-            <span className="text-gray-700">Conecta con el #TalentoEstelar</span>
+            <span className="text-gray-700">{t('heroBadge')}</span>
           </motion.div>
           
           <motion.h1 
@@ -36,11 +39,11 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-5xl md:text-7xl font-black tracking-tight leading-[1.1]"
           >
-            Te ayudamos a contratar los{" "}
+            {t('heroTitle1')}{" "}
             <span className="bg-gradient-to-r from-teal-500 to-inducom-blue bg-clip-text text-transparent drop-shadow-sm">
-              "A-Players"
+              {t('heroTitle2')}
             </span>{" "}
-            que tu empresa necesita.
+            {t('heroTitle3')}
           </motion.h1>
           
           <motion.p 
@@ -49,7 +52,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed"
           >
-            Dominamos Ecuador con procesos ágiles y precisos. Conectamos talento estelar con oportunidades excepcionales usando tecnología avanzada.
+            {t('heroSubtitle')}
           </motion.p>
           
           <motion.div 
@@ -63,7 +66,7 @@ export function HeroSection() {
               className="bg-inducom-dark hover:bg-inducom-blue text-white font-semibold px-10 h-14 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
               onClick={scrollToVacantes}
             >
-              Mirar Vacantes
+              {t('heroBtnVacantes')}
             </Button>
             <Button 
               size="lg" 
@@ -74,7 +77,7 @@ export function HeroSection() {
                 if (element) element.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              Nuestros Servicios
+              {t('heroBtnServicios')}
             </Button>
           </motion.div>
         </div>

@@ -143,14 +143,14 @@ const pipelineColumns = [
 ];
 
 function tagClasses(tag: string) {
-  if (tag === "Nuevo") return "bg-[#EAF2FF] text-[#2457A6]";
-  if (tag === "Entrevista") return "bg-[#FFF3E6] text-[#C46A00]";
-  if (tag === "En Proceso") return "bg-[#E8F8EF] text-[#1F8F57]";
-  if (tag === "En Evaluación") return "bg-[#E7F7F7] text-[#1D8D8D]";
-  if (tag === "Oferta") return "bg-[#FFF4D8] text-[#B7791F]";
-  if (tag === "Oferta Aceptada") return "bg-[#E7F8EA] text-[#2F9E44]";
-  if (tag === "Ganador") return "bg-[#EAF8EC] text-[#2F9E44]";
-  return "bg-slate-100 text-slate-700";
+  if (tag === "Nuevo") return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
+  if (tag === "Entrevista") return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300";
+  if (tag === "En Proceso") return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
+  if (tag === "En Evaluación") return "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300";
+  if (tag === "Oferta") return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300";
+  if (tag === "Oferta Aceptada") return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
+  if (tag === "Ganador") return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
+  return "bg-muted text-muted-foreground";
 }
 
 export function DashboardView() {
@@ -164,7 +164,7 @@ export function DashboardView() {
           return (
             <article
               key={stat.title}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_6px_20px_rgba(15,23,42,0.08)]"
+              className="rounded-2xl border border-border bg-card p-5 shadow-[0_6px_20px_rgba(15,23,42,0.08)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.3)]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div
@@ -174,20 +174,20 @@ export function DashboardView() {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-5xl font-extrabold leading-none text-slate-900">
+                  <p className="text-5xl font-extrabold leading-none text-foreground">
                     {stat.value}
                   </p>
                 </div>
               </div>
 
               <div className="mt-5">
-                <h3 className="text-[2rem] font-extrabold tracking-[-0.03em] text-slate-900 md:text-[1.9rem]">
+                <h3 className="text-[2rem] font-extrabold tracking-[-0.03em] text-foreground md:text-[1.9rem]">
                   {stat.title}
                 </h3>
-                <p className="mt-2 text-sm text-slate-600">{stat.subtitle}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{stat.subtitle}</p>
               </div>
 
-              <button className="mt-5 h-11 w-full rounded-xl border border-[#AFC5DF] bg-[#EAF2FB] text-sm font-semibold text-[#163E73] transition hover:bg-[#dfeaf7]">
+              <button className="mt-5 h-11 w-full rounded-xl border border-primary/20 bg-primary/10 text-sm font-semibold text-primary transition hover:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30">
                 {stat.action}
               </button>
             </article>
@@ -198,27 +198,27 @@ export function DashboardView() {
       {/* Pipeline */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-[-0.03em] text-slate-950">
+          <h2 className="text-4xl font-extrabold tracking-[-0.03em] text-foreground">
             Flujo Detallado de Vacantes
           </h2>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-700">
+        <div className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
             {pipelineSummary.map((item) => (
               <div key={item.label} className="flex items-center gap-2">
                 <span className={`h-3 w-3 rounded-full ${item.color}`} />
-                <span className="font-medium">{item.label}:</span>
-                <span className="font-bold">{item.value}</span>
+                <span className="font-medium text-foreground">{item.label}:</span>
+                <span className="font-bold text-foreground">{item.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-border bg-card p-4 shadow-sm dark:border-border dark:bg-card">
           <div className="grid min-w-[1180px] grid-cols-5 gap-3">
             {pipelineColumns.map((column, columnIndex) => (
-              <div key={column.title} className="rounded-xl bg-slate-50">
+              <div key={column.title} className="rounded-xl bg-slate-50 dark:bg-muted/50">
                 <div className="relative rounded-t-xl bg-[#144A8B] px-4 py-3 text-sm font-bold text-white">
                   {column.title}
                   {columnIndex < pipelineColumns.length - 1 ? (
@@ -230,10 +230,10 @@ export function DashboardView() {
                   {column.items.map((item) => (
                     <div
                       key={`${column.title}-${item.role}`}
-                      className="rounded-xl border border-slate-200 bg-white p-3 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"
+                      className="rounded-xl border border-slate-200 bg-white p-3 shadow-[0_2px_8px_rgba(15,23,42,0.04)] dark:border-border dark:bg-card dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <h4 className="text-[15px] font-bold leading-snug text-slate-900">
+                        <h4 className="text-[15px] font-bold leading-snug text-slate-900 dark:text-foreground">
                           {item.role}
                         </h4>
                         <span
@@ -245,13 +245,13 @@ export function DashboardView() {
                         </span>
                       </div>
 
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 dark:text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5" />
                         <span>{item.location}</span>
                       </div>
 
                       {item.detail ? (
-                        <p className="mt-3 text-sm font-medium text-slate-700">
+                        <p className="mt-3 text-sm font-medium text-slate-700 dark:text-foreground/80">
                           {item.detail}
                         </p>
                       ) : null}

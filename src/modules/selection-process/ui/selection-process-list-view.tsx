@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { type DateRange } from "react-day-picker";
 import {
-  CalendarDays,
   ChevronDown,
   Eye,
+  FileText,
   MoreVertical,
   Pencil,
   Plus,
   Search,
   UserCircle2,
-  FileText,
 } from "lucide-react";
+import { DatePickerWithRange } from "@/components/ui/date-picker-range";
 
 type ProcessStatus = "Activo" | "Pausado" | "Cerrado";
 
@@ -93,8 +94,22 @@ export function SelectionProcessListView() {
   const [search, setSearch] = useState("");
   const [vacancyFilter, setVacancyFilter] = useState("Desarrollador Full Stack");
   const [recruiterFilter, setRecruiterFilter] = useState("Ana García");
-  const [dateRange, setDateRange] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [openRowMenu, setOpenRowMenu] = useState<number | null>(103);
+  const rowMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!rowMenuRef.current || !target) return;
+      if (!rowMenuRef.current.contains(target)) {
+        setOpenRowMenu(null);
+      }
+    };
+
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
 
   const filteredProcesses = useMemo(() => {
     return PROCESSES.filter((process) => {
@@ -113,7 +128,7 @@ export function SelectionProcessListView() {
       const matchesRecruiter =
         recruiterFilter === "" ? true : process.recruiter === recruiterFilter;
 
-      const matchesDate = dateRange === "" ? true : true;
+      const matchesDate = !dateRange ? true : true;
 
       return (
         matchesTab &&
@@ -282,7 +297,10 @@ export function SelectionProcessListView() {
                         </button>
 
                         {openRowMenu === process.id ? (
-                          <div className="absolute right-0 top-12 z-20 w-[170px] rounded-2xl border border-slate-200 bg-white py-2 shadow-[0_14px_40px_rgba(15,23,42,0.16)]">
+                          <div
+                            ref={rowMenuRef}
+                            className="absolute right-0 top-12 z-20 w-[170px] rounded-2xl border border-slate-200 bg-white py-2 shadow-[0_14px_40px_rgba(15,23,42,0.16)]"
+                          >
                             <Link
                               href={`/procesos/${process.id}/candidatos`}
                               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
@@ -372,16 +390,13 @@ export function SelectionProcessListView() {
             <div className="border-t border-slate-200" />
 
             <FilterBlock title="Filtrar por Rango de Fechas">
-              <div className="relative">
-                <CalendarDays className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <input
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  placeholder="Date picker ..."
-                  className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-11 pr-10 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#17A9BB]"
-                />
-                <CalendarDays className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-              </div>
+              <DatePickerWithRange
+                value={dateRange}
+                onChange={setDateRange}
+                placeholder="Selecciona un rango"
+                className="h-12"
+                fieldClassName="w-full"
+              />
             </FilterBlock>
 
             <button

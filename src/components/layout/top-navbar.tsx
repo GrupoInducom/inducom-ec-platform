@@ -76,6 +76,7 @@ const navigation: NavItem[] = [
         items: [
           { label: "Pruebas Técnicas", href: "/evaluaciones", icon: ClipboardCheck },
           { label: "Pruebas Psicométricas", href: "/evaluaciones/psicometricas", icon: Brain },
+          { label: "Asignación", href: "/evaluaciones/asignacion", icon: LayoutGrid },
           { label: "Resultados", href: "/evaluaciones/resultados", icon: BarChart3 },
         ],
       },
@@ -143,6 +144,7 @@ export function TopNavbar() {
             key={item.label}
             className="relative"
             onMouseEnter={() => hasMegaMenu && setOpenMenu(item.label)}
+            onMouseLeave={() => hasMegaMenu && setOpenMenu(null)}
           >
             <button
               type="button"
@@ -159,7 +161,7 @@ export function TopNavbar() {
             </button>
 
             {hasMegaMenu && openMenu === item.label ? (
-              <div className="absolute left-0 top-[calc(100%+12px)] z-50 min-w-[420px]">
+              <div className="absolute left-0 top-full z-50 min-w-[420px] pt-3">
                 <MegaMenu sections={item.megaMenu!} />
               </div>
             ) : null}

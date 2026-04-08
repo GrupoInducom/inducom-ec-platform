@@ -1,0 +1,48 @@
+import type { AdminUser } from "../domain/user";
+
+export const usersMock: AdminUser[] = [
+  {
+    id: "4f5d1f8f-ec2c-4dc4-a76f-4b3a4f3c2001",
+    correo: "ana.garcia@inducom.com",
+    nombre_completo: "Ana García",
+    rol: "administrador",
+    estado: "activo",
+    url_foto_perfil: null,
+    ultimo_acceso_en: "2026-04-08T14:10:00.000Z",
+    creado_en: "2026-01-10T09:00:00.000Z",
+    actualizado_en: "2026-04-08T14:10:00.000Z",
+  },
+  {
+    id: "1a84d1fb-7f8f-42c5-bff9-0f2dd0d8b002",
+    correo: "maria.vallejo@inducom.com",
+    nombre_completo: "María Vallejo",
+    rol: "seleccion",
+    estado: "activo",
+    url_foto_perfil: null,
+    ultimo_acceso_en: "2026-04-08T13:35:00.000Z",
+    creado_en: "2026-01-15T11:20:00.000Z",
+    actualizado_en: "2026-04-08T13:35:00.000Z",
+  },
+  {
+    id: "9a08ef4a-90b4-4d53-96d6-79df8ed6b003",
+    correo: "carlos.ruiz@inducom.com",
+    nombre_completo: "Carlos Ruiz",
+    rol: "revisoria",
+    estado: "inactivo",
+    url_foto_perfil: null,
+    ultimo_acceso_en: "2026-04-05T16:50:00.000Z",
+    creado_en: "2026-02-01T08:45:00.000Z",
+    actualizado_en: "2026-04-05T16:50:00.000Z",
+  },
+  {
+    id: "0dd66270-cf79-49b4-aaf6-a9b7b92cb004",
+    correo: "luis.mendoza@gmail.com",
+    nombre_completo: "Luis Mendoza",
+    rol: "candidato",
+    estado: "bloqueado",
+    url_foto_perfil: null,
+    ultimo_acceso_en: null,
+    creado_en: "2026-03-02T10:10:00.000Z",
+    actualizado_en: "2026-03-28T18:25:00.000Z",
+  },
+];

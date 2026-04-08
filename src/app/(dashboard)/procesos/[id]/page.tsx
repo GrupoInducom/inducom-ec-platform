@@ -1,3 +1,5 @@
+import { SelectionProcessDetailView } from "@/src/modules/selection-process/ui/selection-process-detail-view";
+
 export default function ProcesoDetailPage() {
-  return <div>Detalle del Proceso</div>;
+  return <SelectionProcessDetailView />;
 }

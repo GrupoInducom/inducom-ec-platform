@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
 import Link from "next/link";
 import {
-  CalendarDays,
   ChevronDown,
   GripVertical,
   Plus,
@@ -36,8 +36,8 @@ export function SelectionProcessCreateView() {
   const [recruiter, setRecruiter] = useState("Ana García");
   const [processType, setProcessType] = useState<ProcessType>("Abierto");
   const [status, setStatus] = useState<ProcessStatus>("Borrador");
-  const [startDate, setStartDate] = useState("");
-  const [estimatedCloseDate, setEstimatedCloseDate] = useState("");
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [estimatedCloseDate, setEstimatedCloseDate] = useState<Date | undefined>();
   const [description, setDescription] = useState("");
   const [requirementsInput, setRequirementsInput] = useState("");
   const [requirements, setRequirements] = useState<string[]>([
@@ -268,18 +268,18 @@ export function SelectionProcessCreateView() {
                 </FormRow>
 
                 <FormRow label="Fecha de Inicio">
-                  <DateField
+                  <DatePicker
                     value={startDate}
                     onChange={setStartDate}
-                    placeholder="ej. Select Date..."
+                    placeholder="ej. Selecciona una fecha"
                   />
                 </FormRow>
 
                 <FormRow label="Fecha Cierre Estimada">
-                  <DateField
+                  <DatePicker
                     value={estimatedCloseDate}
                     onChange={setEstimatedCloseDate}
-                    placeholder="ej. Select Date..."
+                    placeholder="ej. Selecciona una fecha"
                   />
                 </FormRow>
               </div>
@@ -345,12 +345,12 @@ export function SelectionProcessCreateView() {
         </div>
 
         <div className="mt-8 flex items-center justify-end gap-3 border-t border-slate-200 pt-6">
-          <button
-            type="button"
+          <Link
+            href="/procesos"
             className="inline-flex h-12 items-center rounded-xl border border-slate-300 bg-slate-100 px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
           >
             Cancelar
-          </button>
+          </Link>
 
           <button
             type="button"
@@ -425,28 +425,6 @@ function SelectBox({
       </select>
 
       <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-    </div>
-  );
-}
-
-function DateField({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-}) {
-  return (
-    <div className="relative">
-      <CalendarDays className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-11 pr-4 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#17A9BB]"
-      />
     </div>
   );
 }
