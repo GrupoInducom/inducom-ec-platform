@@ -13,89 +13,124 @@ import {
   Search,
   UserCircle2,
 } from "lucide-react";
+
 import { DatePickerWithRange } from "@/components/ui/date-picker-range";
 
-type ProcessStatus = "Activo" | "Pausado" | "Cerrado";
+type EstadoProceso =
+  | "borrador"
+  | "publicado"
+  | "pausado"
+  | "cerrado"
+  | "cancelado";
 
 type SelectionProcess = {
-  id: number;
-  title: string;
-  status: ProcessStatus;
-  recruiter: string;
-  candidates: number;
-  currentStage: string;
+  id: string;
+  tituloVacante: string;
+  estado: EstadoProceso;
+  responsableSeleccionNombre: string;
+  totalCandidatos: number;
+  etapaResumen: string;
+  fechaInicio: string;
 };
 
 const PROCESSES: SelectionProcess[] = [
   {
-    id: 101,
-    title: "Desarrollador Full Stack",
-    status: "Activo",
-    recruiter: "Ana García",
-    candidates: 23,
-    currentStage: "Pruebas Técnicas",
+    id: "proc-001",
+    tituloVacante: "Desarrollador Full Stack Senior",
+    estado: "publicado",
+    responsableSeleccionNombre: "Ana García",
+    totalCandidatos: 23,
+    etapaResumen: "Evaluación Técnica",
+    fechaInicio: "2026-04-01",
   },
   {
-    id: 102,
-    title: "Gerente de Ventas",
-    status: "Activo",
-    recruiter: "Ana García",
-    candidates: 9,
-    currentStage: "Pruebas Psicométricas",
+    id: "proc-002",
+    tituloVacante: "Diseñador UI/UX",
+    estado: "publicado",
+    responsableSeleccionNombre: "Ana García",
+    totalCandidatos: 9,
+    etapaResumen: "Entrevista",
+    fechaInicio: "2026-04-02",
   },
   {
-    id: 103,
-    title: "Desarrollador Full Stack",
-    status: "Pausado",
-    recruiter: "Ana García",
-    candidates: 16,
-    currentStage: "Candidatos Detallar",
+    id: "proc-003",
+    tituloVacante: "Analista de Datos",
+    estado: "pausado",
+    responsableSeleccionNombre: "Ana García",
+    totalCandidatos: 16,
+    etapaResumen: "Nuevos",
+    fechaInicio: "2026-04-04",
   },
   {
-    id: 104,
-    title: "Gerente de Ventas",
-    status: "Pausado",
-    recruiter: "Ana García",
-    candidates: 5,
-    currentStage: "Pruebas Psicométricas",
-  },
-  {
-    id: 105,
-    title: "Gerente de Ventas",
-    status: "Cerrado",
-    recruiter: "Ana García",
-    candidates: 2,
-    currentStage: "Pruebas Psicométricas",
+    id: "proc-004",
+    tituloVacante: "Asistente de RRHH",
+    estado: "cerrado",
+    responsableSeleccionNombre: "Ana García",
+    totalCandidatos: 5,
+    etapaResumen: "Ganadores",
+    fechaInicio: "2026-03-15",
   },
 ];
 
 const STATUS_TABS = [
-  { label: "Todos", value: "Todos" },
-  { label: "Activos", value: "Activo" },
-  { label: "Pausados", value: "Pausado" },
-  { label: "Completados", value: "Cerrado" },
+  { label: "Todos", value: "todos" },
+  { label: "Publicados", value: "publicado" },
+  { label: "Pausados", value: "pausado" },
+  { label: "Cerrados", value: "cerrado" },
 ] as const;
 
-function getStatusClasses(status: ProcessStatus) {
-  if (status === "Activo") {
+type StatusTabValue = (typeof STATUS_TABS)[number]["value"];
+
+function getEstadoLabel(estado: EstadoProceso) {
+  switch (estado) {
+    case "borrador":
+      return "Borrador";
+    case "publicado":
+      return "Publicado";
+    case "pausado":
+      return "Pausado";
+    case "cerrado":
+      return "Cerrado";
+    case "cancelado":
+      return "Cancelado";
+  }
+}
+
+function getStatusClasses(estado: EstadoProceso) {
+  if (estado === "publicado") {
     return "bg-[#0891A8] text-white";
   }
 
-  if (status === "Pausado") {
+  if (estado === "pausado") {
     return "bg-[#F2BD42] text-[#5A3B00]";
   }
 
-  return "bg-[#1FA84F] text-white";
+  if (estado === "cerrado") {
+    return "bg-[#1FA84F] text-white";
+  }
+
+  if (estado === "borrador") {
+    return "bg-slate-200 text-slate-700";
+  }
+
+  return "bg-[#F3E5E5] text-[#A44949]";
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("es-EC", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
 }
 
 export function SelectionProcessListView() {
-  const [activeTab, setActiveTab] =
-    useState<(typeof STATUS_TABS)[number]["value"]>("Todos");
+  const [activeTab, setActiveTab] = useState<StatusTabValue>("todos");
   const [search, setSearch] = useState("");
-  const [vacancyFilter, setVacancyFilter] = useState("Desarrollador Full Stack");
-  const [recruiterFilter, setRecruiterFilter] = useState("Ana García");
+  const [vacancyFilter, setVacancyFilter] = useState("");
+  const [recruiterFilter, setRecruiterFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [openRowMenu, setOpenRowMenu] = useState<number | null>(103);
+  const [openRowMenu, setOpenRowMenu] = useState<string | null>(null);
   const rowMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -114,19 +149,21 @@ export function SelectionProcessListView() {
   const filteredProcesses = useMemo(() => {
     return PROCESSES.filter((process) => {
       const matchesTab =
-        activeTab === "Todos" ? true : process.status === activeTab;
+        activeTab === "todos" ? true : process.estado === activeTab;
 
       const matchesSearch =
         search.trim() === ""
           ? true
-          : process.title.toLowerCase().includes(search.toLowerCase()) ||
-            String(process.id).includes(search);
+          : process.tituloVacante.toLowerCase().includes(search.toLowerCase()) ||
+            process.id.toLowerCase().includes(search.toLowerCase());
 
       const matchesVacancy =
-        vacancyFilter === "" ? true : process.title === vacancyFilter;
+        vacancyFilter === "" ? true : process.tituloVacante === vacancyFilter;
 
       const matchesRecruiter =
-        recruiterFilter === "" ? true : process.recruiter === recruiterFilter;
+        recruiterFilter === ""
+          ? true
+          : process.responsableSeleccionNombre === recruiterFilter;
 
       const matchesDate = !dateRange ? true : true;
 
@@ -149,7 +186,6 @@ export function SelectionProcessListView() {
               Dashboard
             </Link>
             <span className="text-slate-400">&gt;</span>
-            
             <span>Proceso de Selección</span>
           </nav>
 
@@ -201,21 +237,19 @@ export function SelectionProcessListView() {
         </div>
       </div>
 
-    {/* ! En una pantalla grande, mostramos la tabla y el panel de filtros lado a lado. En pantallas más pequeñas.
-      el panel de filtros se muestra debajo de la tabla */}
-      
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm">
           <div className="overflow-x-auto">
             <table className="min-w-full border-separate border-spacing-0">
               <thead>
                 <tr className="border-b border-slate-200 text-left text-sm font-semibold text-slate-800">
-                  <th className="px-4 py-4">ID ↕</th>
+                  <th className="px-4 py-4">ID</th>
                   <th className="px-4 py-4">Título Vacante</th>
                   <th className="px-4 py-4">Estado</th>
                   <th className="px-4 py-4">Responsable</th>
                   <th className="px-4 py-4">Candidatos</th>
                   <th className="px-4 py-4">Etapa Actual</th>
+                  <th className="px-4 py-4">Fecha Inicio</th>
                   <th className="px-4 py-4">Acciones</th>
                 </tr>
               </thead>
@@ -229,16 +263,16 @@ export function SelectionProcessListView() {
                     <td className="px-4 py-5 align-middle">{process.id}</td>
 
                     <td className="px-4 py-5 align-middle font-medium">
-                      {process.title}
+                      {process.tituloVacante}
                     </td>
 
                     <td className="px-4 py-5 align-middle">
                       <span
                         className={`inline-flex rounded-lg px-3 py-1 text-sm font-semibold ${getStatusClasses(
-                          process.status,
+                          process.estado,
                         )}`}
                       >
-                        {process.status}
+                        {getEstadoLabel(process.estado)}
                       </span>
                     </td>
 
@@ -247,14 +281,18 @@ export function SelectionProcessListView() {
                         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8D7D7] text-[#904E4E]">
                           <UserCircle2 className="h-7 w-7" />
                         </div>
-                        <span>{process.recruiter}</span>
+                        <span>{process.responsableSeleccionNombre}</span>
                       </div>
                     </td>
 
-                    <td className="px-4 py-5 align-middle">{process.candidates}</td>
+                    <td className="px-4 py-5 align-middle">{process.totalCandidatos}</td>
 
                     <td className="px-4 py-5 align-middle leading-tight">
-                      {process.currentStage}
+                      {process.etapaResumen}
+                    </td>
+
+                    <td className="px-4 py-5 align-middle">
+                      {formatDate(process.fechaInicio)}
                     </td>
 
                     <td className="px-4 py-5 align-middle">
@@ -299,36 +337,36 @@ export function SelectionProcessListView() {
                         {openRowMenu === process.id ? (
                           <div
                             ref={rowMenuRef}
-                            className="absolute right-0 top-12 z-20 w-[170px] rounded-2xl border border-slate-200 bg-white py-2 shadow-[0_14px_40px_rgba(15,23,42,0.16)]"
+                            className="absolute right-0 top-12 z-20 w-[190px] rounded-2xl border border-slate-200 bg-white py-2 shadow-[0_14px_40px_rgba(15,23,42,0.16)]"
                           >
                             <Link
                               href={`/procesos/${process.id}/candidatos`}
                               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
                             >
-                              Ver Candidatos
+                              Ver candidatos
                             </Link>
 
                             <Link
-                              href={`/procesos/${process.id}/candidatos`}
+                              href={`/procesos/${process.id}/candidatos/nuevo`}
                               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
                             >
-                              Añadir Candidato
+                              Añadir candidato
                             </Link>
 
                             <Link
                               href={`/procesos/${process.id}`}
                               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
                             >
-                              Ver Reporte
+                              Ver reporte
                             </Link>
 
                             <button
                               type="button"
                               className="block w-full px-4 py-2 text-left text-sm text-slate-800 hover:bg-slate-50"
                             >
-                              {process.status === "Activo"
-                                ? "Pausar Proceso"
-                                : "Cerrar Proceso"}
+                              {process.estado === "publicado"
+                                ? "Pausar proceso"
+                                : "Cerrar proceso"}
                             </button>
                           </div>
                         ) : null}
@@ -340,7 +378,7 @@ export function SelectionProcessListView() {
                 {filteredProcesses.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-12 text-center text-sm text-slate-500"
                     >
                       No se encontraron procesos con los filtros aplicados.
@@ -362,10 +400,13 @@ export function SelectionProcessListView() {
                   className="h-12 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-800 outline-none focus:border-[#17A9BB]"
                 >
                   <option value="">Todas</option>
-                  <option value="Desarrollador Full Stack">
-                    Desarrollador Full Stack
-                  </option>
-                  <option value="Gerente de Ventas">Gerente de Ventas</option>
+                  {Array.from(new Set(PROCESSES.map((item) => item.tituloVacante))).map(
+                    (vacancy) => (
+                      <option key={vacancy} value={vacancy}>
+                        {vacancy}
+                      </option>
+                    ),
+                  )}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               </div>
@@ -373,7 +414,7 @@ export function SelectionProcessListView() {
 
             <div className="border-t border-slate-200" />
 
-            <FilterBlock title="Filtrar por Reclutador">
+            <FilterBlock title="Filtrar por Responsable">
               <div className="relative">
                 <select
                   value={recruiterFilter}
@@ -381,7 +422,13 @@ export function SelectionProcessListView() {
                   className="h-12 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-800 outline-none focus:border-[#17A9BB]"
                 >
                   <option value="">Todos</option>
-                  <option value="Ana García">Ana García</option>
+                  {Array.from(
+                    new Set(PROCESSES.map((item) => item.responsableSeleccionNombre)),
+                  ).map((responsable) => (
+                    <option key={responsable} value={responsable}>
+                      {responsable}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               </div>

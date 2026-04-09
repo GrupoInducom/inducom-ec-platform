@@ -1,5 +1,15 @@
 import { ProcessCandidatesView } from "@/src/modules/candidates/ui/process-candidates-view";
 
-export default function ProcesoCandidatosPage() {
-  return <ProcessCandidatesView />;
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function ProcessCandidatesByProcessPage({
+  params,
+}: PageProps) {
+  const { id } = await params;
+
+  return <ProcessCandidatesView initialProcesoId={id} />;
 }
